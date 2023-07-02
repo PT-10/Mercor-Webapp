@@ -1,0 +1,43 @@
+## Installation
+To install the ourlib package, you can use the pip package manager. ourlib is available on the Python Package Index (PyPI), so you can easily install it by running the following command:
+```python filename=""  copy
+pip install ourlib
+```
+
+Note: It is recommended to create a virtual environment before installing any Python packages to keep your project dependencies isolated.
+```python filename=""  copy
+python -m venv myenv  # Create a virtual environment
+```
+```python filename=""  copy
+source myenv/bin/activate  # Activate the virtual environment
+```
+```python filename=""  copy
+pip install ourlib  # Install the ourlib package
+```
+
+## Uploading Model Files
+To upload your machine learning model files using the ourlib package, follow the steps below:
+
+  1. Navigate to the folder where your machine learning model files are saved using the command line or terminal. Make sure you are in the correct directory containing the model files.
+
+  2. Run the ourlib upload command in the command line or terminal. This command will upload all the files in the current working directory to the designated server.
+```python filename=""  copy
+  ourlib upload
+```
+  3. Wait for the upload process to complete. The command will display a message indicating whether the upload was successful or if any errors occurred.
+    * If the files are uploaded successfully, you will see the message "Files uploaded successfully!".
+    * If there are any errors during the upload, you will see the message "Failed to upload files!".
+
+## Deploying the Model and Obtaining API Endpoint
+After uploading your machine learning model files using the ourlib package, you can proceed to deploy the model and obtain the API endpoint. The API endpoint will serve as the interface for making predictions and integrating the model into your frontend applications. Follow the steps below:
+1. Ensure that the model files have been successfully uploaded to the server using the ourlib upload command. If you encounter any errors during the upload process, please resolve them before proceeding.
+2. Run the ourlib deploy command in the command line or terminal. This command will initiate the deployment process and set up the necessary configurations for hosting the model.
+```python filename=""  copy
+ourlib deploy
+```
+3. Wait for the deployment process to complete. This may take a few moments depending on the size of your model and the server configuration.
+4. Once the deployment is successful, you will see the API endpoint URL displayed in the command line or terminal. The URL will typically be in the following format:
+```
+API endpoint: http://your-api-endpoint.com
+```
+5. Congratulations! You now have your model deployed and ready to use. You can integrate the API endpoint URL into your frontend applications to send requests and receive predictions from the deployed model.
