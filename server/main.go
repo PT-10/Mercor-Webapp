@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"os/exec"
 )
 
 type Hello struct {
@@ -90,8 +91,36 @@ func homeHandle(w http.ResponseWriter, r *http.Request) {
 	w.Write(response)
 }
 
+func handleDeploy(w http.ResponseWriter, r *http.Request) {
+	// Command to run the bash script
+	cmd := exec.Command("/bin/bash", "./deploy.sh")
+
+	// Set the environment variables for the command if needed
+	cmd.Env = os.Environ()
+
+	// Capture the output and error from the command
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Fatalf("Error running script: %v", err)
+	}
+
+	// Print the output of the command
+	log.Printf("Script output:\n%s", string(output))
+}
+
 func main() {
-    http.HandleFunc("/upload", uploadHandler)
 	http.HandleFunc("/", homeHandle)
-    log.Fatal(http.ListenAndServe(":8080", nil))
+    http.HandleFunc("/upload", uploadHandler)
+	http.HandleFunc("/deploy", handleDeploy)
+
+	// deploying the server 
+    err := http.ListenAndServe(":8080", nil)
+
+	// checking for errors in starting the server
+	if err != nil {
+		log.Fatal("ListenAndServe: ", err)
+	}
+
+	// printing when the server is successful 
+	log.Println("The server is running on PORT 8080")
 }
