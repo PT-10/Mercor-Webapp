@@ -1,12 +1,20 @@
-# Start from a base Golang image
-FROM golang:1.16-alpine
 
-# Install Docker CLI dependencies
-RUN apk add --no-cache curl
+# Use Ubuntu as the base image
+FROM ubuntu
 
-# Download and install Docker CLI binary
-RUN curl -fsSL https://download.docker.com/linux/static/stable/x86_64/docker-20.10.7.tgz \
-    | tar xzvf - --strip-components=1 -C /usr/local/bin docker/docker
+# Update the package lists and install necessary packages
+RUN apt-get update && apt-get install -y \
+    curl \
+    build-essential
+
+# Install Go
+RUN curl -O https://dl.google.com/go/go1.16.5.linux-amd64.tar.gz
+RUN tar -xvf go1.16.5.linux-amd64.tar.gz
+RUN mv go /usr/local
+
+# Set environment variables for Go
+ENV GOPATH=/go
+ENV PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
 
 # Set the working directory inside the container
 WORKDIR /app
