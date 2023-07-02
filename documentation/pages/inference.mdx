@@ -1,0 +1,85 @@
+## Writing the inference.py File
+
+To successfully integrate your machine learning model with the ourlib package, it is essential to create a user-defined inference.py file. This file will contain the necessary code for loading and predicting with your model. Follow the guidelines below to ensure a smooth integration:
+    #### Import the necessary libraries and modules: 
+            - Import any libraries or modules required for your model's functionality. Make sure you have installed these dependencies beforehand.
+
+    #### Inherit from ourlib.Model: 
+    - In your Deployment class, make sure to inherit from ourlib.Model. This ensures that your class has the necessary structure and methods to be compatible with the ourlib package.
+
+    #### Implement the load method: 
+    - Override the load method to define the logic for loading your saved model. In this method, load the model weights or any other required components to prepare your model for prediction.
+
+    #### Implement the predict method: 
+    - Override the predict method to define the logic for making predictions using your loaded model. This method should take an input file (or any required inputs) and return the prediction.
+
+    
+### Here's a template for an inference.py:
+```python filename=""  copy
+import ourlib
+
+class Deployment(ourlib.Model):
+    def load(self):
+        # User-defined code to load the model
+        pass
+
+    def predict(self, input_data):
+        # User-defined code to make predictions using the loaded model
+        pass
+```
+By following these guidelines, you can create an inference.py file that is compatible with the ourlib package and provides the necessary functionality for loading and predicting with your machine learning model. Remember to customize the code inside the load and predict methods based on your specific model implementation and requirements.
+
+### Example inference.py file:
+```python filename="" copy
+import ourlib
+import io
+import torch
+import librosa
+from extract_features import Features
+from model import CNN
+
+class_labels = {0: "neutral", 1: "calm", 2: "happy", 3: "sad", 4: "angry", 5: "fearful", 6: "disgust", 7: "surprised"}
+
+class Deployment(ourlib.Model):
+    def load(self):
+        # Load the saved model
+        self.train_model = CNN()
+        self.train_model.load_state_dict(torch.load("ravdess_ffn.pth"))
+
+    def predict(self, file):
+        # Define helper functions to convert the input file to appropriate inputs required by your model for prediction
+        # Make a prediction using the model
+        data, sampling_rate = librosa.load(file, sr=None)
+
+        ft = Features()
+        augmented_input = ft.augment_input(data, sampling_rate)
+        input = ft.extract_features(augmented_input, sampling_rate)
+
+        # Convert the features to a tensor and unsqueeze to add a batch dimension
+        input_tensor = torch.tensor(input).unsqueeze(0)
+
+        # Make a prediction using the train_model
+        self.train_model.eval()
+        with torch.no_grad():
+            output = self.train_model(input_tensor.float())
+            _, predicted = torch.max(output.data, 1)
+            class_label = predicted.item()
+
+        return class_labels[class_label]
+```
+The inference.py example provided demonstrates how to use the ourlib package for audio-based inference using PyTorch. It assumes that you have a trained model for audio classification and want to deploy it for making predictions on new audio data.
+
+Here's a breakdown of the example code:
+
+    * The Deployment class is defined, which inherits from the ourlib.Model class. This allows you to leverage the functionalities provided by the ourlib package.
+
+    * Inside the load method, you would write your code to load the trained model. In the given example, it loads a model named CNN from a saved state dictionary using PyTorch's load_state_dict function. You would replace this code with your own logic to load your trained audio classification model.
+
+    * The predict method takes an input_data parameter, which represents the audio data you want to classify. In the example, it assumes the input data is in the form of a file path to an audio file. You would modify this method to handle your specific input data format.
+
+    * Inside the predict method, you can define any necessary helper functions to preprocess the input audio data before passing it to your model. In the example, it uses the librosa library to load the audio file, extract features using the Features class, and preprocess the features for prediction.
+
+    After preprocessing the input data, the example code makes a prediction using the loaded model. It passes the preprocessed input through the model and obtains the predicted output. The predicted class label is then mapped to the corresponding label from the class_labels dictionary.
+
+
+
