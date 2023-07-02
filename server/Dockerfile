@@ -5,9 +5,9 @@ FROM python:3.9-alpine
 WORKDIR /app
 
 # Copy the Python file to the container
+COPY inference.py .
 COPY upload .
 
-
 # Set the command to run when the container starts
-CMD [ "python", ".inference.py" ]
+CMD [ "python", "inference.py" ]
 
